@@ -1,0 +1,12 @@
+- hosts: new_managers
+  become: yes
+  gather_facts: no
+  vars:
+    master_node_name: "cornelio.app.iac-svil.almaviva.it"
+    master_node_ip: "10.116.82.131"
+    master_node_user: "root"
+    rancher_domain: "cornelio.app.iac-svil.almaviva.it"
+    helm_version: "v3.11.0"
+    rancher_version: "2.11.2"
+  roles:
+    - kubectl_setup
