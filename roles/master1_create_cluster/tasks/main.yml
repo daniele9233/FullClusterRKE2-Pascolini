@@ -2,10 +2,10 @@
 - name: Wait for Rancher cluster to be fully ready
   pause:
     seconds: 280  # 3 minuti
-  delegate_to: localhost
+  delegate_to: "{{ ansibleSshHost }}"
 
 - name: Get Rancher API token
-  delegate_to: localhost
+  delegate_to: "{{ ansibleSshHost }}"
   uri:
     url: "https://{{ rancher_domain }}/v3-public/localProviders/local?action=login"
     method: POST
@@ -19,7 +19,7 @@
   register: api_token_response
 
 - name: Set Rancher server URL (completa setup iniziale)
-  delegate_to: localhost
+  delegate_to: "{{ ansibleSshHost }}"
   uri:
     url: "https://{{ rancher_domain }}/v3/settings/server-url"
     method: PUT
@@ -34,7 +34,7 @@
     validate_certs: no
 
 - name: Accept Rancher EULA
-  delegate_to: localhost
+  delegate_to: "{{ ansibleSshHost }}"
   uri:
     url: "https://{{ rancher_domain }}/v3/setting/first-login"
     method: POST
@@ -47,7 +47,7 @@
   ignore_errors: yes
 
 - name: Create a new Kubernetes RKE2 custom cluster via Rancher API
-  delegate_to: localhost
+  delegate_to: "{{ ansibleSshHost }}"
   uri:
     url: "https://{{ rancher_domain }}/v1/provisioning.cattle.io.clusters"
     method: POST
@@ -104,7 +104,7 @@
     var: create_cluster_result.json
 
 - name: Wait for cluster to be provisioned
-  delegate_to: localhost
+  delegate_to: "{{ ansibleSshHost }}"
   uri:
     url: "https://{{ rancher_domain }}/v1/provisioning.cattle.io.clusters/fleet-default/{{ cluster_name }}"
     method: GET
@@ -119,7 +119,7 @@
   ignore_errors: yes
 
 - name: Get cluster ID from legacy API for registration token
-  delegate_to: localhost
+  delegate_to: "{{ ansibleSshHost }}"
   uri:
     url: "https://{{ rancher_domain }}/v3/clusters?name={{ cluster_name }}"
     method: GET
@@ -136,7 +136,7 @@
     var: legacy_cluster_info.json
 
 - name: Get or create cluster registration token
-  delegate_to: localhost
+  delegate_to: "{{ ansibleSshHost }}"
   uri:
     url: "https://{{ rancher_domain }}/v3/clusterregistrationtokens"
     method: POST
@@ -154,7 +154,7 @@
   ignore_errors: yes
 
 - name: Wait for registration token to be ready
-  delegate_to: localhost
+  delegate_to: "{{ ansibleSshHost }}"
   uri:
     url: "https://{{ rancher_domain }}/v3/clusterregistrationtokens?clusterId={{ legacy_cluster_info.json.data[0].id }}"
     method: GET
@@ -269,7 +269,7 @@
   loop: "{{ join_workers_status.results }}"
 
 - name: Verify nodes are registered in Rancher
-  delegate_to: localhost
+  delegate_to: "{{ ansibleSshHost }}"
   uri:
     url: "https://{{ rancher_domain }}/v3/nodes?clusterId={{ legacy_cluster_info.json.data[0].id }}"
     method: GET
