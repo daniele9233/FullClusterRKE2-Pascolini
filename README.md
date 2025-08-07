@@ -1,5 +1,26 @@
-<<<<<<< HEAD
-# FullCluster-Rke2-QuasiTerminato-DaControllare-Dischi
-=======
-# Rancher-RKE2-ClusterCustom-GestioneDischi-Hostname-CertificatoValido
->>>>>>> 5cd9718ae0d58892d92acb76c9d7fcf47bd52fce
+
+
+Step1:  Eseguire questi comandi per capire quali versione di rancher è compatibile con rke2 cosi da poter popolare le variabili
+
+
+Ultime versioni di rancher stabili 
+
+curl -s https://api.github.com/repos/rancher/rancher/releases | jq -r '.[] | select(.tag_name | test("^v[0-9]+\\.[0-9]+\\.[0-9]+$")) | .tag_name' | head -5
+
+
+Ultime versioni di kubernetes 
+
+curl -s https://api.github.com/repos/rancher/rke2/releases | jq -r '.[].tag_name' | grep -v rc | head -10
+
+
+Inserire i certificati all'interno della dir
+
+/roles/master1_helm_cert_manager_install/files
+
+
+cacerts.pem
+fullchain.pem
+privkey.pem
+
+
+ansible-playbook -i inventory.ini rke2_install_clean.yml ; sleep 180 ; ansible-playbook -i inventory.ini rke2_install_fix_dns.yml
