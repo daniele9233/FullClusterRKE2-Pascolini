@@ -23,5 +23,4 @@ fullchain.pem
 privkey.pem
 
 
- ansible-playbook -i inventory.ini rke2_install.yml ; sleep 180 ; ansible-playbook -i inventory.ini rke2_install.yml.solo.kubectl
-
+ansible-playbook -i inventory.ini rke2_install_clean.yml ; sleep 180 ; ansible-playbook -i inventory.ini rke2_install_fix_dns.yml
